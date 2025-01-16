@@ -1,0 +1,24 @@
+name: flutter_tts_engine_example
+description: Example app for flutter_tts_engine package
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  tts_engine:
+    path: ../
+  flutter_sound: ^9.2.13
+  permission_handler: ^11.2.0
+  path_provider: ^2.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true 
