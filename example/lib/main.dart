@@ -261,6 +261,8 @@ class _MyHomePageState extends State<MyHomePage> {
         return '日语女声';
       case VoiceOption.japaneseMale:
         return '日语男声';
+      case VoiceOption.englishFemale:
+        return '英语女声';
     }
   }
 

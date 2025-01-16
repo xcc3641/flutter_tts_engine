@@ -5,4 +5,5 @@ enum VoiceOption {
   maleMature,
   japaneseFemale,
   japaneseMale,
+  englishFemale,
 }

@@ -125,6 +125,8 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
         return const MicrosoftVoiceOptions(voice: "ja-JP-NanamiNeural");
       case VoiceOption.japaneseMale:
         return const MicrosoftVoiceOptions(voice: "ja-JP-KeitaNeural");
+      case VoiceOption.englishFemale:
+        return const MicrosoftVoiceOptions(voice: "en-US-EmmaNeural");
     }
   }
 }
