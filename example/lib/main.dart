@@ -35,9 +35,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _textController = TextEditingController(
-    text: '你好，这是一个文字转语音的示例。',
-  );
+  final _textController = TextEditingController();
   final _engines = {
     'Edge TTS': 'edge',
     'Azure TTS': 'azure',
@@ -46,6 +44,17 @@ class _MyHomePageState extends State<MyHomePage> {
   VoiceOption _selectedVoice = VoiceOption.femaleYouthful;
   bool _isConverting = false;
   bool _isPlaying = false;
+
+  final Map<VoiceOption, String> _exampleTexts = {
+    VoiceOption.femaleYouthful: '你好，这是一个文字转语音的示例。',
+    VoiceOption.femaleAnime: '欢迎使用语音合成，让我们一起探索有趣的声音世界。',
+    VoiceOption.maleCalm: '这是一个沉稳的男声示例，适合用于正式场合。',
+    VoiceOption.maleMature: '感谢使用我们的语音服务，希望能为您带来良好的体验。',
+    VoiceOption.japaneseFemale: 'こんにちは、音声合成のデモへようこそ。',
+    VoiceOption.japaneseMale: '私の声を使って、あなたのメッセージを伝えましょう。',
+    VoiceOption.englishFemale:
+        'Hello! Welcome to our text-to-speech demo. Feel free to try out different voices and languages.',
+  };
 
   final FlutterSoundPlayer _player = FlutterSoundPlayer();
   String? _audioPath;
@@ -56,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _initializePlayer();
+    _textController.text = _exampleTexts[_selectedVoice]!;
   }
 
   Future<void> _initializePlayer() async {
@@ -192,6 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (value == null) return;
                 setState(() {
                   _selectedVoice = value;
+                  _textController.text = _exampleTexts[value]!;
                 });
               },
             ),
