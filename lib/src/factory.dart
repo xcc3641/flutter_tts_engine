@@ -1,8 +1,7 @@
-
-import 'package:tts_engine/decorator/voice_cache_engine.dart';
-import 'package:tts_engine/engine.dart';
-import 'package:tts_engine/impl/azure.dart';
-import 'package:tts_engine/impl/edge.dart';
+import 'decorator/voice_cache_engine.dart';
+import 'engine.dart';
+import 'impl/azure.dart';
+import 'impl/edge.dart';
 
 TtsEngine createTtsEngine({String? provider}) {
   final TtsEngine engine;

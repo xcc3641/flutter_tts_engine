@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:tts_engine/impl/microsoft.dart';
+import 'microsoft.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 

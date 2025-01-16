@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:tts_engine/engine.dart';
-import 'package:tts_engine/voice_option.dart';
-
+import '../engine.dart';
+import '../voice_option.dart';
 
 class VoiceCacheEngine extends TtsEngine {
   final TtsEngine delegate;
@@ -13,7 +12,11 @@ class VoiceCacheEngine extends TtsEngine {
   VoiceCacheEngine({required this.delegate});
 
   @override
-  Future<Uint8List> convert(String text, VoiceOption voice, {CancelToken? cancelToken,}) {
+  Future<Uint8List> convert(
+    String text,
+    VoiceOption voice, {
+    CancelToken? cancelToken,
+  }) {
     return delegate.convert(text, voice, cancelToken: cancelToken);
   }
 

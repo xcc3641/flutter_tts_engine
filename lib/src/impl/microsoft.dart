@@ -4,18 +4,21 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
-import 'package:tts_engine/engine.dart';
-import 'package:tts_engine/voice_option.dart';
+import '../engine.dart';
+import '../voice_option.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 
 abstract class MicrosoftTtsEngine extends TtsEngine {
-
   IOWebSocketChannel doConnect();
   String buildSSml(String text, MicrosoftVoiceOptions options);
 
   @override
-  Future<Uint8List> convert(String text, VoiceOption voice, {CancelToken? cancelToken,}) async {
+  Future<Uint8List> convert(
+    String text,
+    VoiceOption voice, {
+    CancelToken? cancelToken,
+  }) async {
     final connection = doConnect();
 
     final requestTransformer = StreamTransformer.fromHandlers(
@@ -205,7 +208,6 @@ class _Message {
     );
   }
 }
-
 
 class CancelTokenException implements Exception {
   final String message;

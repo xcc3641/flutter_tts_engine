@@ -1,7 +1,7 @@
 name: tts_engine
 description: A Flutter text-to-speech engine package
 version: 0.0.1
-homepage: https://github.com/yourusername/tts_engine
+homepage: https://github.com/yourusername/flutter_tts_engine
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
