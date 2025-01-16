@@ -210,9 +210,3 @@ class _Message {
     );
   }
 }
-
-class CancelTokenException implements Exception {
-  final String message;
-
-  CancelTokenException(this.message);
-}
