@@ -4,10 +4,11 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
-import '../engine.dart';
-import '../voice_option.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
+
+import '../engine.dart';
+import '../voice_option.dart';
 
 abstract class MicrosoftTtsEngine extends TtsEngine {
   IOWebSocketChannel doConnect();
@@ -113,20 +114,20 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
 
   MicrosoftVoiceOptions _convert(VoiceOption voice) {
     switch (voice) {
-      case VoiceOption.femaleYouthful:
+      case VoiceOption.zhFemale:
         return const MicrosoftVoiceOptions(voice: "zh-CN-XiaoxiaoNeural");
-      case VoiceOption.femaleAnime:
-        return const MicrosoftVoiceOptions(voice: "zh-CN-XiaoyiNeural");
-      case VoiceOption.maleCalm:
-        return const MicrosoftVoiceOptions(voice: "zh-CN-YunxiNeural");
-      case VoiceOption.maleMature:
-        return const MicrosoftVoiceOptions(voice: "zh-CN-YunyangNeural");
       case VoiceOption.japaneseFemale:
         return const MicrosoftVoiceOptions(voice: "ja-JP-NanamiNeural");
-      case VoiceOption.japaneseMale:
-        return const MicrosoftVoiceOptions(voice: "ja-JP-KeitaNeural");
       case VoiceOption.englishFemale:
         return const MicrosoftVoiceOptions(voice: "en-US-EmmaNeural");
+      case VoiceOption.spanishFemale:
+        return const MicrosoftVoiceOptions(voice: "es-ES-ElviraNeural"); // 或保留 Conchita
+      case VoiceOption.koreanFemale:
+        return const MicrosoftVoiceOptions(voice: "ko-KR-SunHiNeural"); // 已很好
+      case VoiceOption.frenchFemale:
+        return const MicrosoftVoiceOptions(voice: "fr-FR-DeniseNeural"); // 或保留 Julie
+      case VoiceOption.italianFemale:
+        return const MicrosoftVoiceOptions(voice: "it-IT-ElsaNeural"); // 或保留 Isabella
     }
   }
 }

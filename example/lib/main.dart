@@ -1,11 +1,10 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:tts_engine/tts_engine.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tts_engine/tts_engine.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,19 +40,22 @@ class _MyHomePageState extends State<MyHomePage> {
     'Azure TTS': 'azure',
   };
   String _selectedEngine = 'edge';
-  VoiceOption _selectedVoice = VoiceOption.femaleYouthful;
+  VoiceOption _selectedVoice = VoiceOption.zhFemale;
   bool _isConverting = false;
   bool _isPlaying = false;
 
   final Map<VoiceOption, String> _exampleTexts = {
-    VoiceOption.femaleYouthful: '你好，这是一个文字转语音的示例。',
-    VoiceOption.femaleAnime: '欢迎使用语音合成，让我们一起探索有趣的声音世界。',
-    VoiceOption.maleCalm: '这是一个沉稳的男声示例，适合用于正式场合。',
-    VoiceOption.maleMature: '感谢使用我们的语音服务，希望能为您带来良好的体验。',
+    VoiceOption.zhFemale: '你好，这是一个文字转语音的示例。',
     VoiceOption.japaneseFemale: 'こんにちは、音声合成のデモへようこそ。',
-    VoiceOption.japaneseMale: '私の声を使って、あなたのメッセージを伝えましょう。',
     VoiceOption.englishFemale:
         'Hello! Welcome to our text-to-speech demo. Feel free to try out different voices and languages.',
+    VoiceOption.spanishFemale:
+        '¡Hola! Bienvenido al demo de texto a voz. Prueba libremente diferentes voces e idiomas.',
+    VoiceOption.koreanFemale: '안녕하세요! 텍스트를 음성으로 변환하는 데모에 오신 것을 환영합니다. 다양한 음성과 언어를 테스트해 보세요.',
+    VoiceOption.frenchFemale:
+        'Bonjour! Bienvenue dans la démo de conversion texte en voix. Essayez différentes voix et langues.',
+    VoiceOption.italianFemale:
+        'Ciao! Benvenuto nel demo di conversione testo in voce. Sentiti libero di provare diverse voci e lingue.',
   };
 
   final FlutterSoundPlayer _player = FlutterSoundPlayer();
@@ -260,20 +262,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String _getVoiceName(VoiceOption voice) {
     switch (voice) {
-      case VoiceOption.femaleYouthful:
-        return '女声 - 青春活力';
-      case VoiceOption.femaleAnime:
-        return '女声 - 动漫风格';
-      case VoiceOption.maleCalm:
-        return '男声 - 沉稳';
-      case VoiceOption.maleMature:
-        return '男声 - 成熟';
+      case VoiceOption.zhFemale:
+        return '女声 - 中文';
       case VoiceOption.japaneseFemale:
-        return '日语女声';
-      case VoiceOption.japaneseMale:
-        return '日语男声';
+        return '女声 - 日语';
       case VoiceOption.englishFemale:
-        return '英语女声';
+        return '女声 - 英语';
+      case VoiceOption.spanishFemale:
+        return '女声 - 西班牙语';
+      case VoiceOption.koreanFemale:
+        return '女声 - 韩语';
+      case VoiceOption.frenchFemale:
+        return '女声 - 法语';
+      case VoiceOption.italianFemale:
+        return '女声 - 意大利语';
     }
   }
 

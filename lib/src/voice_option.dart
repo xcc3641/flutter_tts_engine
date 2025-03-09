@@ -1,9 +1,9 @@
 enum VoiceOption {
-  femaleYouthful,
-  femaleAnime,
-  maleCalm,
-  maleMature,
+  zhFemale,
   japaneseFemale,
-  japaneseMale,
   englishFemale,
+  spanishFemale,
+  koreanFemale,
+  frenchFemale,
+  italianFemale,
 }
