@@ -114,6 +114,7 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
 
   MicrosoftVoiceOptions _convert(VoiceOption voice) {
     switch (voice) {
+      // -------- 女声 --------
       case VoiceOption.zhFemale:
         return const MicrosoftVoiceOptions(voice: "zh-CN-XiaoxiaoNeural");
       case VoiceOption.japaneseFemale:
@@ -121,13 +122,28 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
       case VoiceOption.englishFemale:
         return const MicrosoftVoiceOptions(voice: "en-US-EmmaNeural");
       case VoiceOption.spanishFemale:
-        return const MicrosoftVoiceOptions(voice: "es-ES-ElviraNeural"); // 或保留 Conchita
+        return const MicrosoftVoiceOptions(voice: "es-ES-ElviraNeural");
       case VoiceOption.koreanFemale:
-        return const MicrosoftVoiceOptions(voice: "ko-KR-SunHiNeural"); // 已很好
+        return const MicrosoftVoiceOptions(voice: "ko-KR-SunHiNeural");
       case VoiceOption.frenchFemale:
-        return const MicrosoftVoiceOptions(voice: "fr-FR-DeniseNeural"); // 或保留 Julie
+        return const MicrosoftVoiceOptions(voice: "fr-FR-DeniseNeural");
       case VoiceOption.italianFemale:
-        return const MicrosoftVoiceOptions(voice: "it-IT-ElsaNeural"); // 或保留 Isabella
+        return const MicrosoftVoiceOptions(voice: "it-IT-ElsaNeural");
+      // -------- 男声 --------
+      case VoiceOption.zhMale:
+        return const MicrosoftVoiceOptions(voice: "zh-CN-YunxiNeural");
+      case VoiceOption.japaneseMale:
+        return const MicrosoftVoiceOptions(voice: "ja-JP-KeitaNeural");
+      case VoiceOption.englishMale:
+        return const MicrosoftVoiceOptions(voice: "en-US-BrianNeural");
+      case VoiceOption.spanishMale:
+        return const MicrosoftVoiceOptions(voice: "es-ES-AlvaroNeural");
+      case VoiceOption.koreanMale:
+        return const MicrosoftVoiceOptions(voice: "ko-KR-InJoonNeural");
+      case VoiceOption.frenchMale:
+        return const MicrosoftVoiceOptions(voice: "fr-FR-HenriNeural");
+      case VoiceOption.italianMale:
+        return const MicrosoftVoiceOptions(voice: "it-IT-DiegoNeural");
     }
   }
 }

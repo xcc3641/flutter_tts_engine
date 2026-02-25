@@ -35,16 +35,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final _textController = TextEditingController();
-  final _engines = {
-    'Edge TTS': 'edge',
-    'Azure TTS': 'azure',
-  };
-  String _selectedEngine = 'edge';
   VoiceOption _selectedVoice = VoiceOption.zhFemale;
   bool _isConverting = false;
   bool _isPlaying = false;
 
   final Map<VoiceOption, String> _exampleTexts = {
+    // -------- 女声 --------
     VoiceOption.zhFemale: '你好，这是一个文字转语音的示例。',
     VoiceOption.japaneseFemale: 'こんにちは、音声合成のデモへようこそ。',
     VoiceOption.englishFemale:
@@ -56,12 +52,23 @@ class _MyHomePageState extends State<MyHomePage> {
         'Bonjour! Bienvenue dans la démo de conversion texte en voix. Essayez différentes voix et langues.',
     VoiceOption.italianFemale:
         'Ciao! Benvenuto nel demo di conversione testo in voce. Sentiti libero di provare diverse voci e lingue.',
+    // -------- 男声 --------
+    VoiceOption.zhMale: '你好，这是一个文字转语音的示例。',
+    VoiceOption.japaneseMale: 'こんにちは、音声合成のデモへようこそ。',
+    VoiceOption.englishMale:
+        'Hello! Welcome to our text-to-speech demo. Feel free to try out different voices and languages.',
+    VoiceOption.spanishMale: '¡Hola! Bienvenido al demo de texto a voz. Prueba libremente diferentes voces e idiomas.',
+    VoiceOption.koreanMale: '안녕하세요! 텍스트를 음성으로 변환하는 데모에 오신 것을 환영합니다. 다양한 음성과 언어를 테스트해 보세요.',
+    VoiceOption.frenchMale:
+        'Bonjour! Bienvenue dans la démo de conversion texte en voix. Essayez différentes voix et langues.',
+    VoiceOption.italianMale:
+        'Ciao! Benvenuto nel demo di conversione testo in voce. Sentiti libero di provare diverse voci e lingue.',
   };
 
   final FlutterSoundPlayer _player = FlutterSoundPlayer();
   String? _audioPath;
 
-  TtsEngine get _ttsEngine => createTtsEngine(provider: _selectedEngine);
+  TtsEngine get _ttsEngine => createTtsEngine();
 
   @override
   void initState() {
@@ -165,28 +172,6 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 引擎选择
-            DropdownButtonFormField<String>(
-              value: _selectedEngine,
-              decoration: const InputDecoration(
-                labelText: '选择 TTS 引擎',
-                border: OutlineInputBorder(),
-              ),
-              items: _engines.entries
-                  .map((e) => DropdownMenuItem(
-                        value: e.value,
-                        child: Text(e.key),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                if (value == null) return;
-                setState(() {
-                  _selectedEngine = value;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-
             // 声音选择
             DropdownButtonFormField<VoiceOption>(
               value: _selectedVoice,
@@ -276,6 +261,20 @@ class _MyHomePageState extends State<MyHomePage> {
         return '女声 - 法语';
       case VoiceOption.italianFemale:
         return '女声 - 意大利语';
+      case VoiceOption.zhMale:
+        return '男声 - 中文';
+      case VoiceOption.japaneseMale:
+        return '男声 - 日语';
+      case VoiceOption.englishMale:
+        return '男声 - 英语';
+      case VoiceOption.spanishMale:
+        return '男声 - 西班牙语';
+      case VoiceOption.koreanMale:
+        return '男声 - 韩语';
+      case VoiceOption.frenchMale:
+        return '男声 - 法语';
+      case VoiceOption.italianMale:
+        return '男声 - 意大利语';
     }
   }
 

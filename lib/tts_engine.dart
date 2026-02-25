@@ -1,7 +1,7 @@
-/// A Flutter Text-to-Speech engine library that supports multiple providers.
+/// A Flutter Text-to-Speech engine library powered by Azure TTS.
 ///
-/// This library provides a unified interface for different TTS providers
-/// including Edge TTS and Azure TTS.
+/// Provides a unified interface for Azure Cognitive Services TTS
+/// with voice caching and multiple language support.
 library tts_engine;
 
 export 'src/engine.dart';
