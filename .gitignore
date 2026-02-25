@@ -92,4 +92,4 @@ app.*.map.json
 *.tmp
 *.temp
 .DS_Store
-Thumbs.db tool/output/
+tool/output/
