@@ -1,3 +1,10 @@
+/**
+ * [INPUT]: 依赖 collection/dio/uuid/web_socket_channel，依赖 engine/voice_option/word_boundary/tts_result
+ * [OUTPUT]: 对外提供 MicrosoftTtsEngine 抽象基类, MicrosoftVoiceOptions
+ * [POS]: impl/ 的协议层，实现 Microsoft WebSocket TTS 协议 + SSML + WordBoundary 解析
+ * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ */
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -8,11 +15,20 @@ import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 
 import '../engine.dart';
+import '../tts_result.dart';
 import '../voice_option.dart';
+import '../word_boundary.dart';
+
+// ============================================================
+// MicrosoftTtsEngine — WebSocket TTS 协议抽象
+// 子类只需实现 doConnect() 和 buildSSml()
+// ============================================================
 
 abstract class MicrosoftTtsEngine extends TtsEngine {
   IOWebSocketChannel doConnect();
   String buildSSml(String text, MicrosoftVoiceOptions options);
+
+  // -------- 纯音频合成 --------
 
   @override
   Future<Uint8List> convert(
@@ -20,12 +36,36 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
     VoiceOption voice, {
     CancelToken? cancelToken,
   }) async {
+    final result = await _synthesize(text, voice, wordBoundary: false);
+    return result.audioBytes;
+  }
+
+  // -------- 音频 + 词级时间戳 --------
+
+  @override
+  Future<TtsResult> convertWithTimestamps(
+    String text,
+    VoiceOption voice, {
+    CancelToken? cancelToken,
+  }) {
+    return _synthesize(text, voice, wordBoundary: true);
+  }
+
+  // ============================================================
+  // 核心管道：WebSocket → 分流 (audio / audio.metadata) → TtsResult
+  // ============================================================
+
+  Future<TtsResult> _synthesize(
+    String text,
+    VoiceOption voice, {
+    required bool wordBoundary,
+  }) async {
     final connection = doConnect();
+    final boundaries = <WordBoundary>[];
 
     final requestTransformer = StreamTransformer.fromHandlers(
       handleData: (_Message data, EventSink<String> sink) {
-        final msg = data.build();
-        sink.add(msg);
+        sink.add(data.build());
       },
     );
 
@@ -34,13 +74,13 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
         final message = _parseMessage(data);
         if (message == null) return;
         switch (message.path) {
-          case "turn.start":
-            break;
           case "audio":
             sink.add(message.payload.codeUnits);
-            break;
+          case "audio.metadata":
+            if (wordBoundary) _extractBoundaries(message.payload, boundaries);
           case "turn.end":
             connection.sink.close();
+          default:
             break;
         }
       },
@@ -55,17 +95,42 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
     final requestId = const Uuid().v4().toString();
     final options = _convert(voice);
 
-    final inputStream = Stream.fromIterable(
-      [
-        _buildConfigMessage(requestId, options.format),
-        _buildSsmlMessage(requestId, text, options),
-      ],
-    ).transform(requestTransformer);
+    final inputStream = Stream.fromIterable([
+      _buildConfigMessage(requestId, options.format, wordBoundary: wordBoundary),
+      _buildSsmlMessage(requestId, text, options),
+    ]).transform(requestTransformer);
+
     final outputStream = connection.stream.transform(responseTransformer);
 
     connection.sink.addStream(inputStream);
-    return outputStream.toList().then((value) => Uint8List.fromList(value.flattened.toList()));
+    final audioBytes = await outputStream.toList().then((chunks) => Uint8List.fromList(chunks.flattened.toList()));
+
+    return TtsResult(audioBytes: audioBytes, boundaries: boundaries);
   }
+
+  // ============================================================
+  // WordBoundary 解析
+  // audio.metadata payload: {"Metadata":[{"Type":"WordBoundary","Data":{...}}]}
+  // ============================================================
+
+  void _extractBoundaries(String payload, List<WordBoundary> out) {
+    try {
+      final json = jsonDecode(payload) as Map<String, dynamic>;
+      final metadata = json['Metadata'] as List<dynamic>? ?? [];
+      for (final entry in metadata) {
+        final map = entry as Map<String, dynamic>;
+        if (map['Type'] == 'WordBoundary') {
+          out.add(WordBoundary.fromMetadata(map['Data'] as Map<String, dynamic>));
+        }
+      }
+    } catch (_) {
+      // 非 WordBoundary 消息或格式异常，静默跳过
+    }
+  }
+
+  // ============================================================
+  // 消息解析与构建
+  // ============================================================
 
   _Message? _parseMessage(dynamic data) {
     try {
@@ -73,22 +138,25 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
         return _Message.parse(data);
       } else if (data is Uint8List) {
         return _Message.parse(String.fromCharCodes(data));
-      } else {
-        return null;
       }
-    } catch (e, s) {
+      return null;
+    } catch (_) {
       return null;
     }
   }
 
-  _Message _buildConfigMessage(String requestId, String format) {
+  _Message _buildConfigMessage(
+    String requestId,
+    String format, {
+    required bool wordBoundary,
+  }) {
     final data = {
       "context": {
         "synthesis": {
           "audio": {
             "metadataOptions": {
               "sentenceBoundaryEnabled": false,
-              "wordBoundaryEnabled": false,
+              "wordBoundaryEnabled": wordBoundary,
             },
             "outputFormat": format,
           }
@@ -103,7 +171,11 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
     );
   }
 
-  _Message _buildSsmlMessage(String requestId, String text, MicrosoftVoiceOptions options) {
+  _Message _buildSsmlMessage(
+    String requestId,
+    String text,
+    MicrosoftVoiceOptions options,
+  ) {
     return _Message(
       requestId: requestId,
       path: "ssml",
@@ -111,6 +183,10 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
       payload: buildSSml(text, options),
     );
   }
+
+  // ============================================================
+  // VoiceOption → MicrosoftVoiceOptions 映射
+  // ============================================================
 
   MicrosoftVoiceOptions _convert(VoiceOption voice) {
     switch (voice) {
@@ -148,20 +224,15 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
   }
 }
 
+// ============================================================
+// MicrosoftVoiceOptions — 声音配置
+// ============================================================
+
 class MicrosoftVoiceOptions {
-  /// 声音
   final String voice;
-
-  /// 风格
   final String style;
-
-  /// 风格强度
   final double styleDegree;
-
-  /// 角色
   final String role;
-
-  /// 音频格式
   final String format;
 
   const MicrosoftVoiceOptions({
@@ -173,23 +244,29 @@ class MicrosoftVoiceOptions {
   });
 }
 
+// ============================================================
+// _Message — WebSocket 消息帧 (header + payload)
+// ============================================================
+
 class _Message {
   final String path;
   final String requestId;
   final String contentType;
-
   final String payload;
 
-  _Message({required this.path, required this.requestId, required this.contentType, required this.payload});
+  _Message({
+    required this.path,
+    required this.requestId,
+    required this.contentType,
+    required this.payload,
+  });
 
   @override
-  String toString() {
-    return "Message(path:$path, requestId:$requestId, contentType:$contentType)";
-  }
+  String toString() => "Message(path:$path, requestId:$requestId, contentType:$contentType)";
 
   String build() {
     final ts = DateTime.now().toUtc().toIso8601String();
-    final config = [
+    return [
       "X-Timestamp:$ts",
       "X-RequestId:$requestId",
       "Content-Type:$contentType",
@@ -197,7 +274,6 @@ class _Message {
       "",
       payload,
     ].join("\r\n");
-    return config;
   }
 
   factory _Message.parse(String data) {
