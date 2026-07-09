@@ -27,19 +27,7 @@ class AzureTtsEngine extends MicrosoftTtsEngine {
   }
 
   @override
-  String buildSSml(String text, MicrosoftVoiceOptions options) {
-    final ssml = '''
-        <speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
-          <voice name="${options.voice}">
-            <mstts:express-as style="${options.style}" styledegree="${options.styleDegree}" role="${options.role}">
-              <prosody rate="0%" pitch="0%">$text</prosody>
-            </mstts:express-as>
-          </voice>
-        </speak>
-    '''
-        .trim();
-    return ssml;
-  }
+  String buildSSml(String text, MicrosoftVoiceOptions options) => buildAzureSsml(text, options);
 
   @override
   Future<List<String>> getVoiceList() async {
@@ -61,4 +49,22 @@ class AzureTtsEngine extends MicrosoftTtsEngine {
 
     return array.where((element) => element['Locale'] == 'zh-CN').map((e) => e['ShortName'] as String).toList();
   }
+}
+
+// ============================================================
+// Azure SSML 构建（顶层，供 AzureTtsEngine 与 WorkerTtsEngine 共用）
+// mstts:express-as 包裹 —— 与 demo 端点同款，保证换真 key 后 voice/音色一致
+// ============================================================
+
+String buildAzureSsml(String text, MicrosoftVoiceOptions options) {
+  return '''
+        <speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
+          <voice name="${options.voice}">
+            <mstts:express-as style="${options.style}" styledegree="${options.styleDegree}" role="${options.role}">
+              <prosody rate="0%" pitch="0%">$text</prosody>
+            </mstts:express-as>
+          </voice>
+        </speak>
+    '''
+      .trim();
 }

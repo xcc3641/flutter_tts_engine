@@ -188,39 +188,45 @@ abstract class MicrosoftTtsEngine extends TtsEngine {
   // VoiceOption → MicrosoftVoiceOptions 映射
   // ============================================================
 
-  MicrosoftVoiceOptions _convert(VoiceOption voice) {
-    switch (voice) {
-      // -------- 女声 --------
-      case VoiceOption.zhFemale:
-        return const MicrosoftVoiceOptions(voice: "zh-CN-XiaoxiaoNeural");
-      case VoiceOption.japaneseFemale:
-        return const MicrosoftVoiceOptions(voice: "ja-JP-NanamiNeural");
-      case VoiceOption.englishFemale:
-        return const MicrosoftVoiceOptions(voice: "en-US-EmmaNeural");
-      case VoiceOption.spanishFemale:
-        return const MicrosoftVoiceOptions(voice: "es-ES-ElviraNeural");
-      case VoiceOption.koreanFemale:
-        return const MicrosoftVoiceOptions(voice: "ko-KR-SunHiNeural");
-      case VoiceOption.frenchFemale:
-        return const MicrosoftVoiceOptions(voice: "fr-FR-DeniseNeural");
-      case VoiceOption.italianFemale:
-        return const MicrosoftVoiceOptions(voice: "it-IT-ElsaNeural");
-      // -------- 男声 --------
-      case VoiceOption.zhMale:
-        return const MicrosoftVoiceOptions(voice: "zh-CN-YunxiNeural");
-      case VoiceOption.japaneseMale:
-        return const MicrosoftVoiceOptions(voice: "ja-JP-KeitaNeural");
-      case VoiceOption.englishMale:
-        return const MicrosoftVoiceOptions(voice: "en-US-BrianNeural");
-      case VoiceOption.spanishMale:
-        return const MicrosoftVoiceOptions(voice: "es-ES-AlvaroNeural");
-      case VoiceOption.koreanMale:
-        return const MicrosoftVoiceOptions(voice: "ko-KR-InJoonNeural");
-      case VoiceOption.frenchMale:
-        return const MicrosoftVoiceOptions(voice: "fr-FR-HenriNeural");
-      case VoiceOption.italianMale:
-        return const MicrosoftVoiceOptions(voice: "it-IT-DiegoNeural");
-    }
+  MicrosoftVoiceOptions _convert(VoiceOption voice) => microsoftVoiceOptionsFor(voice);
+}
+
+// ============================================================
+// VoiceOption → MicrosoftVoiceOptions 映射（顶层，供 Azure/Worker 等实现共用）
+// ============================================================
+
+MicrosoftVoiceOptions microsoftVoiceOptionsFor(VoiceOption voice) {
+  switch (voice) {
+    // -------- 女声 --------
+    case VoiceOption.zhFemale:
+      return const MicrosoftVoiceOptions(voice: "zh-CN-XiaoxiaoNeural");
+    case VoiceOption.japaneseFemale:
+      return const MicrosoftVoiceOptions(voice: "ja-JP-NanamiNeural");
+    case VoiceOption.englishFemale:
+      return const MicrosoftVoiceOptions(voice: "en-US-EmmaNeural");
+    case VoiceOption.spanishFemale:
+      return const MicrosoftVoiceOptions(voice: "es-ES-ElviraNeural");
+    case VoiceOption.koreanFemale:
+      return const MicrosoftVoiceOptions(voice: "ko-KR-SunHiNeural");
+    case VoiceOption.frenchFemale:
+      return const MicrosoftVoiceOptions(voice: "fr-FR-DeniseNeural");
+    case VoiceOption.italianFemale:
+      return const MicrosoftVoiceOptions(voice: "it-IT-ElsaNeural");
+    // -------- 男声 --------
+    case VoiceOption.zhMale:
+      return const MicrosoftVoiceOptions(voice: "zh-CN-YunxiNeural");
+    case VoiceOption.japaneseMale:
+      return const MicrosoftVoiceOptions(voice: "ja-JP-KeitaNeural");
+    case VoiceOption.englishMale:
+      return const MicrosoftVoiceOptions(voice: "en-US-BrianNeural");
+    case VoiceOption.spanishMale:
+      return const MicrosoftVoiceOptions(voice: "es-ES-AlvaroNeural");
+    case VoiceOption.koreanMale:
+      return const MicrosoftVoiceOptions(voice: "ko-KR-InJoonNeural");
+    case VoiceOption.frenchMale:
+      return const MicrosoftVoiceOptions(voice: "fr-FR-HenriNeural");
+    case VoiceOption.italianMale:
+      return const MicrosoftVoiceOptions(voice: "it-IT-DiegoNeural");
   }
 }
 
