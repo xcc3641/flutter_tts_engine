@@ -93,3 +93,6 @@ app.*.map.json
 *.temp
 .DS_Store
 tool/output/
+
+# agent scratch state
+.pi/
